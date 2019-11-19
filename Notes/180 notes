@@ -1,0 +1,125 @@
+CS180
+
+Week 1:
+induction/recursion
+Changing bases. The game of Nim.
+Graphs/celebrity
+
+Week 2:
+Mergesort. The celebrity problem. Towers of Hanoi.
+Asymptotic complexity.
+
+
+Week 3:
+Graphs:  Trees, Traversals,  Topological order, Strongly connected component.
+DFS, topological soriting, depth of DAG
+
+	Shortest path:
+		Dijsktra: one source -> all other nodes (greedy)
+		Bellman ford: one source -> all other nodes (negative allowed)
+		Floyd warshall: between all pairs 
+
+	Minimal spanning tree:
+
+	Minimal bottle neck tree:
+
+
+Week 4:
+Greedy algorithms
+graphs, mst, mbnt, huffman coding, scheduling
+	Huffman coding:
+	Scheduling:
+	
+Divide conquer:
+recusion method
+	DC, recursion, DP => first think about recursion
+
+Week 5:
+Dynamic Programming.
+	Longest ascending sequence (increasing sequence):
+		1. Find recursion: optimal subproblems
+			LIS(x, A[i-n]) = max (1+LIS(A[i], A[i+1...n]), LIS(x, A[i-n]))
+									if A[i] >= x			 otherwise
+		2. Memoization
+			save LIS(x, A[i-n]) -> data structure
+			If it is seen before, O(1) look up
+			If not, use recursion to solve it
+
+		3. O(n^2) subproblems
+
+		4. Bottom up evaluation
+			Fill the base case locations
+			Evaluate right to left
+			Evaluate top to bottom
+			Evaluate LIS(i,j)
+
+		Dynamic programming:
+			define: opt[i] is LIS that ends at A[i]
+			opt[i] = max(opt[j]+1)
+						A[j]<=A[i]
+
+		Divide and conquer
+			Merge LIS[l], LIS[r] O(n^2)
+			for 1<=i<=n/2: LIS[i]
+			for n/2<=i<=n: LIS[j] = max(LIS[j], LIS[j]+1)
+
+		Greedy flavor:
+			for each local LIS with length k, M[k] is the minimum last value
+
+		Algorithm:
+			for i from 1 to n
+				if (A[i] >= M[best])	
+					best++
+					opt[i] = best
+					M[best] = A[i]
+				else
+					k = binary seach M such that M[k]<=A[i]<M[k+1]
+					M[k+1] = A[i]
+					opt[i] = k+1
+			return max(opt)
+
+	Printing neatly
+		define cost[i,j]:
+			infinity
+			0
+			(M-(j-1)-sum)^3
+		Recursion
+			try every possible solution for the last line
+			only finite many possibilities
+
+
+	Distributed MST
+		Kruskal algorithm
+			Sorted edges in increasing order
+			Add edges in s if no cycle
+			repeart adding n-1 times
+
+		Distributed Kruskal (O(nlogn))
+			initialize s
+			If my edge won't create a cycle is S in O(logn) reading
+				select min among all
+			repeat n-1 times
+
+
+	Knapsack
+		O(nW) - pseudo polynomial, **not polynomial time
+
+
+
+
+
+
+Week 6:
+Max Flow with applications.
+Bucket sort
+
+Week 7:
+Intractability.
+
+Week 8:
+NP-completeness Reductions.
+
+Week 9:
+Distributed, parallel, randomized, and  approximation algorithms.
+
+Week 10:

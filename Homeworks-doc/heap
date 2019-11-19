@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    Node(int v) {
+        val = v;
+    }
+    Node* left = nullptr;
+    Node* right = nullptr;
+    int val = 0;
+    
+};
+
+void heap(int f[], int n, int remain, int index) {
+    if (remain == 0)
+        return;
+    int ro = n-1-index;
+    int l = n-1-(2*index+1);
+    int r = n-1-(2*index+2);
+    
+    if(ro < 0 || l < 0 || r < 0)
+        return;
+    
+    Node* root = new Node(f[n-1-index]);
+    printf("root: %d\n", root->val);
+    
+    Node* left = new Node(f[l]);
+    root->left = left;
+    remain--;
+    printf("%d->left: %d\n", root->val, left->val);
+    heap(f, n, remain, 2*index+1);
+    
+    Node* right = new Node(f[r]);
+    root->right = right;
+    remain--;
+    printf("%d->right: %d\n", root->val, right->val);
+    heap(f, n, remain, 2*index+2);
+}
+int main() {
+    int f[7] = {0,1,2,4,6,7,9};
+    heap(f, 7, 7, 0);
+    return 0;
+}

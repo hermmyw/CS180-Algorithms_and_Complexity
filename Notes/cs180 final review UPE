@@ -1,0 +1,41 @@
+1. Dynamic programming
+
+(1) find sub problems
+(2) recursion
+(3) solve sub cases
+
+2. interval scheduling
+	- sort by earliest start time -> a[n]
+
+	interval	time unit
+	5	1-2
+	7	1-4
+	8	2-7
+	3	3-6
+	4	6-8
+
+	i: interval
+	j: time unit
+	DP[i][j] = opt(i,j) = max{opt[i+j], opt[i-j]+value(i)}
+
+
+
+
+3. Ford fulkerson
+
+residual graph
+	s->t: left capacity
+	t->s: used capacity
+augmenting path
+	path from s to t in residual graph
+	done when no augmenting path
+
+maxflow, mincut theorem
+
+
+application:
+	max edge dfisjoint paths: capacity=1, find maxflow
+
+NP-completeness
+
+Reduction from partitioning sum to load balancing

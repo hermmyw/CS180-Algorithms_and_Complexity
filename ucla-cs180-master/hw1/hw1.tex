@@ -1,0 +1,192 @@
+% Author: Zhehao Wang 404380075 zhehao@cs.ucla.edu
+
+% Thanks to Haitao Zhang for helping with (trying to) catch up with the class, and with the latex template
+% Grammar package: http://tex.stackexchange.com/questions/24886/which-package-can-be-used-to-write-bnf-grammars
+
+\documentclass{article}
+\topmargin = 0in
+\oddsidemargin = 0in
+\evensidemargin = \oddsidemargin
+\textwidth = 6.5in
+\textheight = 8in
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{syntax}
+
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+\title{Homework 1}
+\author{Zhehao Wang 404380075 (Dis 1D)}
+\date{Apr 4, 2016}
+
+\begin{document}
+\maketitle
+
+\begin{description}
+
+\item[1]{Binary addition algorithm correctness proof}
+  
+  The input number $n$'s binary representation can be denoted as $n=a_k...a_0$, where $a_i=0$ or $a_i=1$ ($0 \leq i \leq k$, $k$ is the most significant bit). The flipped output number $n'$ can be denoted as $n'=a'_k...a'_0$ in binary.
+  We have 
+  \[
+  n = \sum_{j=0}^{k}{a_j \cdot 2^j}
+  \qquad \text{and} \qquad 
+  n' = \sum_{j=0}^{k}{a'_j \cdot 2^j}
+  \]
+  
+  Denote the position of the first $0$ in $n$ to $i$, we have 
+  $$n = \sum_{j=0}^{i-1}{1 \cdot 2^j} + 0 \cdot 2^i + \sum_{j=i+1}^{k}{a_j \cdot 2^j} = \frac{2^i-1}{2-1} + \sum_{j=i+1}^{k}{a_j \cdot 2^j} = 2^i - 1 + \sum_{j=i+1}^{k}{a_j \cdot 2^j}$$ 
+  and
+  $$n + 1 = 2^i + \sum_{j=i+1}^{k}{a_j \cdot 2^j}$$
+
+  After the flip in question, resulting number $n'$ can be denoted as
+  $$n' = \sum_{j=0}^{k}{a'_j \cdot 2^j} = \sum_{j=0}^{i-1}{0 \cdot 2^j} + 1 \cdot 2^i + \sum_{j=i+1}^{k}{a'_j \cdot 2^j} = 2^i + \sum_{j=i+1}^{k}{a_j \cdot 2^j}$$
+
+  Thus we have $n' = n + 1$, and the binary addition algorithm is correct.
+
+\item[2]{Binary tree depth algorithm}
+
+  \begin{algorithm}[h]
+  \caption{Binary tree depth recursive}
+  \label{alg:binary-tree-depth-recursive}
+    \begin{algorithmic}[1]
+    \Function{maxDepth}{node}
+      \If {$node = nil$} 
+        \State \Return 0
+      \EndIf
+
+      \State $leftDepth \gets maxDepth(node.leftChild)$
+      \State $rightDepth \gets maxDepth(node.rightChild)$
+
+      \If {$leftDepth > rightDepth$}
+        \State \Return $leftDepth + 1$
+      \Else {} 
+        \State \Return $rightDepth + 1$
+      \EndIf
+    \EndFunction
+    \end{algorithmic}
+  \end{algorithm}
+
+  \textbf{Alg. \ref{alg:binary-tree-depth-recursive} (recursive)}
+
+  \textbf{Correctness:} by definition, the depth of the tree is the longest path from root to leaves. Thus the depth at each node is $1 + max(depth(leftChild), depth(rightChild))$. The algorithm is correct as it recursively traverses both the left and right subtree of each node, and returns the larger depth of the two.
+
+  \textbf{Time complexity:} this algorithm is $O(n)$, where $n$ is the number of nodes in the tree. Reason being that each node (including \textit{null} leaves) of the tree will be visited exactly once, and the number of instructions executed during each visit is constant. The number of \textit{null} nodes will be $2n$ at maximum, so the algorithm visits at most $3n$ nodes, which makes it $O(n)$ by asymptotic notation.
+
+  \begin{algorithm}[h]
+  \caption{Binary tree depth iterative}
+  \label{alg:binary-tree-depth-iterative}
+    \begin{algorithmic}[1]
+    \Function{getDepth}{root}
+      \State $queue \gets [root]$
+      \State $height \gets 0$
+      \While {True}
+        \State $nodeCount \gets queue.size()$
+        \If {$nodeCount = 0$}
+          \State \Return $height$
+        \EndIf
+        \State $height \gets height + 1$
+        \While {$nodeCount > 0$}
+          \State $r \gets queue.dequeue()$
+          \If {$r.hasLeft()$}
+             \State $queue.enqueue(r.leftChild)$
+          \EndIf
+          \If {$r.hasRight()$}
+             \State $queue.enqueue(r.rightChild)$
+          \EndIf
+          \State $nodeCount \gets nodeCount - 1$
+        \EndWhile
+      \EndWhile
+    \EndFunction
+    \end{algorithmic}
+  \end{algorithm}
+
+  \textbf{Alg. \ref{alg:binary-tree-depth-iterative} (iterative)}
+
+  \textbf{Correctness:} the algorithm does a level-by-level traversal of the binary tree using a queue, not unlike a BFS (difference being that this has a nested loop, so that each inner loop only traverses the nodes on the same level; while BFS, having one loop with an empty queue being the exit condition, traverses the entire tree in that loop). If a level is not empty, all the nodes on the level are visited, all nodes on the next level are enqueued, and the tree's height increases by 1. Otherwise the algorithm returns the height, which is the current number of levels.
+
+  \textbf{Time complexity:} this algorithm is $O(n)$, where $n$ is the number of nodes in the tree. Reason being that each node of the tree will be visited exactly once.
+
+\item[3]{Elementary-school-division algorithm}
+
+  \begin{algorithm}[h]
+  \caption{Elementary-school-division recursive}
+  \label{alg:division-recursive}
+    \begin{algorithmic}[1]
+    \Function{division_r}{a, b}
+      \If {$a < 10 \cdot b$} 
+        \State \Return $a / b$
+      \Else {} 
+        \State $temp \gets division\_r(a, 10 \cdot b)$ \label{alg:division-line1}
+        \State \Return $temp \cdot 10 + division\_r(a - temp \cdot 10 \cdot b, b)$ \label{alg:division-line2}
+      \EndIf
+    \EndFunction
+    \end{algorithmic}
+  \end{algorithm}
+
+  \textbf{Alg. \ref{alg:division-recursive} (recursive)}
+
+  \textbf{Time complexity:} each call on \textit{division} on line \ref{alg:division-line1} will cause $n-m$ recursive calls, where $n$ is the number of digits in the decimal representation of $a$, and $m$ is the number of digits in the decimal representation of $b$. The number of calls on \textit{division} reduces by $1$ each time we calculate the result of the division of the remainder on line \ref{alg:division-line2}. Thus, the number of calls is $\frac{(n-m+1)(n-m)}{2}$, which makes the algorithm $O((n-m)^2)$. Given this particular implementation, each call on \textit{division} results in $5$ or $2$ operations, depending on if $a > 10 \cdot b$. The total number of operations is $5 \cdot \frac{(n-m-1)(n-m)}{2} + 2 \cdot (n-m)$
+
+  \begin{algorithm}[h]
+  \caption{Elementary-school-division iterative}
+  \label{alg:division-iterative}
+    \begin{algorithmic}[1]
+    \Function{division_i}{a, b}
+      \State $temp \gets b$
+      \State $stack \gets []$
+      \While {$a > 10 \cdot temp$}
+        \State $stack.push(temp)$
+        \State $temp = 10 \cdot temp$
+      \EndWhile
+      \State $res \gets a / temp$
+      \State $result \gets res$
+      \While {$!stack.isEmpty()$}
+        \State $res \gets a - temp \cdot result$
+        \State $temp \gets stack.pop()$
+        \State $res \gets res / temp$
+        \State $result \gets 10 \cdot result + res$
+      \EndWhile
+      \State \Return $result$
+    \EndFunction
+    \end{algorithmic}
+  \end{algorithm}
+
+  \textbf{Alg. \ref{alg:division-iterative} (iterative)}
+
+  \textbf{Time complexity:} both loops will run $n-m$ times, where $n$ is the number of digits in the decimal representation of $a$, and $m$ is the number of digits in the decimal representation of $b$. Asymptotically, this algorithm is $O(n-m)$. The total number of operations is $c \cdot (n-m)$. Given this particular implementation, the value of $c$ is $9$. (Assuming the cost of assignment is $0$, and the costs of stack operations, like $push$, $pop$ and $isEmpty$, are $1$.)
+
+  \textbf{Note:} this algorithm stores $b, b \cdot 10, b \cdot 10^2...b \cdot 10^n$ until it's large enough to divide $a$. The algorithm then gets the most significant bit from the division, calculates the remainder, and pops out $b \cdot 10^{n-1}$ to divide the remainder. The algorithm iteratively repeat this process until we get the result. This algorithm has better time complexity than Alg. \ref{alg:division-recursive}, because the stack essentially plays the role of a cache in dynamic programming here, so that we don't have to recalculate $b \cdot 10^i$ in each round.
+
+\item[4]{NIM game}
+
+  (a.1) 
+
+  \textbf{Theorem:} for any favorable table, there exists a move that makes the table unfavorable.
+
+  \textbf{Proof:} denote the columns that have odd number of ones as $c_0...c_k$, where $c_k$ is the most signifcant column. There exist at least one row $r$ whose number of matches $m_r$'s binary representation has $1$ in column $c_k$.
+
+  Flip $m_r$'s bit in column $c_0...c_k$, we have a new number of matches $m'_r$. $m'_r < m_r$ since $m_r$ has $1$ in the most significant flipped bit (in column $c_k$), while $m'_r$ has $0$. By taking out $m_r - m'_r$ matches from row $r$, the number of ones in column $c_0...c_k$ increases or decreases by $1$, and the number of ones in other columns remains unchanged. Thus after this removal, all columns will have even number of ones, making the table unfavorable.
+
+  (a.2) 
+
+  \textbf{Theorem:} for any unfavorable table, any move makes the table favorable for one's opponent.
+
+  \textbf{Lemma:} for any non-empty row $r$ with $m_r$ matches, removing $i=1..m_r$ matches from row $r$ will at least flip one column of $m_r$. 
+
+  This lemma is trivial to prove: denote the number of matches after the removal as $m'_r$. If after removing $i$ matches, none of the bits of $m_r$ changed, then $m_r = m'_r$, and $i = m'_r - m_r = 0$, which contradicts with $i=1..m_r$.
+
+  \textbf{Proof:} by the above lemma, for any non-empty row $r$, any move will flip at least one column of $m_r$. Denote the flipped columns of $m_r$ as $c_0..c_k$, the number of ones in columns $c_0...c_k$ will increase or decrease by $1$ because of the removal, thus column $c_0..c_k$ will have odd number of ones, making the table favorable for the opponent.
+
+  (b) 
+
+  \textbf{Winning strategy:} if the board's favorable with only one row left, claim all the matches of that row. Otherwise, starting from a favorable board, pick a move that makes the board unfavorable for the opponent. Such a move always exists according to Theorem (a.1). When the board's unfavorable, whatever the opponent's move is, the board will become favorable again according to Theorem (a.2). The winning strategy is to repeat the steps above until claiming the last match.
+
+\end{description}
+
+\end{document}
